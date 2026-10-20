@@ -1,0 +1,10 @@
+# Packages built by build.sh
+dist/
+
+# macOS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+*.swp
