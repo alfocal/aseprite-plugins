@@ -1,0 +1,14 @@
+{
+  "name": "timelapse",
+  "displayName": "Timelapse",
+  "description": "Records a snapshot of the drawing after every change and exports the recording as an animation.",
+  "version": "1.0.0",
+  "author": { "name": "alfocal" },
+  "license": "MIT",
+  "categories": [ "Scripts" ],
+  "contributes": {
+    "scripts": [
+      { "path": "./timelapse.lua" }
+    ]
+  }
+}

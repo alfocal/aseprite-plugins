@@ -8,6 +8,8 @@ Extensiones para [Aseprite](https://www.aseprite.org/) escritas con su
 | Extensión | Descripción |
 | --- | --- |
 | [Value Check](value-check/) | Vista previa en vivo y en escala de grises para comprobar los valores mientras pintas. Incluye posterizado, vista con los colores originales y espejo horizontal. |
+| [Iso Guides](iso-guides/) | Rejilla isométrica 2:1 para dibujar pixel art, en una capa de referencia bloqueada que no se exporta. |
+| [Timelapse](timelapse/) | Graba una instantánea del dibujo tras cada cambio y exporta la grabación como animación (GIF, WebP, PNG...). |
 
 ## Instalación
 

@@ -1,0 +1,14 @@
+{
+  "name": "iso-guides",
+  "displayName": "Iso Guides",
+  "description": "Isometric (2:1) pixel-art grid on a locked reference layer that is never exported.",
+  "version": "1.0.1",
+  "author": { "name": "alfocal" },
+  "license": "MIT",
+  "categories": [ "Scripts" ],
+  "contributes": {
+    "scripts": [
+      { "path": "./iso-guides.lua" }
+    ]
+  }
+}
