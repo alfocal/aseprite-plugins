@@ -1,0 +1,69 @@
+# Builds every extension and publishes them as a GitHub release on each push
+# to main. Assets keep a fixed name, so
+# releases/latest/download/<name>.aseprite-extension always points to the
+# newest build.
+name: Release
+
+on:
+  push:
+    branches: [main]
+    # Files that don't end up in any package
+    paths-ignore:
+      - README.md
+      - LICENSE
+      - .gitignore
+      - .editorconfig
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# One release at a time, so tags and changelogs stay in order
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        run: ./build.sh
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v$(date -u +%Y.%m.%d)-$GITHUB_RUN_NUMBER"
+          prev=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // empty')
+          base="https://github.com/$GITHUB_REPOSITORY/releases/download/$tag"
+          {
+            echo "## Extensiones"
+            echo
+            echo "| Extensión | Versión | Descarga |"
+            echo "| --- | --- | --- |"
+            for pkg in */package.json; do
+              file="$(dirname "$pkg").aseprite-extension"
+              jq -r --arg base "$base" --arg file "$file" \
+                '"| \(.displayName) | \(.version) | [\($file)](\($base)/\($file)) |"' \
+                "$pkg"
+            done
+            echo
+            echo "Para instalar, descarga el archivo y haz doble clic en él, o en Aseprite"
+            echo "ve a *Edit > Preferences > Extensions > Add Extension*. Si ya tenías"
+            echo "una versión anterior, se sustituye."
+            if [ -n "$prev" ]; then
+              echo
+              echo "## Cambios"
+              echo
+              git log --pretty='- %s' "$prev..$GITHUB_SHA"
+            fi
+          } > notes.md
+          gh release create "$tag" dist/*.aseprite-extension \
+            --target "$GITHUB_SHA" \
+            --title "$tag" \
+            --notes-file notes.md
