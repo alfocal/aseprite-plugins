@@ -2,7 +2,7 @@
   "name": "value-check",
   "displayName": "Value Check",
   "description": "Live grayscale preview of the active sprite to check values (lightness), with optional posterize.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": { "name": "alfocal" },
   "license": "MIT",
   "categories": [ "Scripts" ],

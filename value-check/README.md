@@ -10,6 +10,9 @@ deshacer.
 - **Ventana:** se puede redimensionar y recuerda su tamaño y posición.
 - **Color:** muestra los colores originales en lugar de los valores.
 - **Flip H:** espeja la vista horizontalmente (el sprite no cambia).
+- **...:** oculta o muestra *Mode* y *Posterize* para que la ventana ocupe
+  menos. La ventana se encoge o crece lo que ocupan esas filas, y recuerda si
+  estaban ocultas.
 - **Mode**
   - *Perceptual (L\*)*: luminosidad percibida (CIE L\*). Es la mejor opción
     para juzgar valores.

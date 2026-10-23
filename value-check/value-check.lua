@@ -173,10 +173,8 @@ local function close()
   state.checker, state.view = nil, nil
 end
 
--- Saved bounds, moved and shrunk as needed to fit in the main window
-local function savedBounds()
-  local b = prefs.bounds
-  if not b then return nil end
+-- Bounds moved and shrunk as needed to fit in the main window
+local function fitInWindow(b)
   local ok, rc = pcall(function()
     local w = math.min(b.width, app.window.width)
     local h = math.min(b.height, app.window.height)
@@ -184,6 +182,23 @@ local function savedBounds()
                      math.max(0, math.min(b.y, app.window.height - h)), w, h)
   end)
   if ok then return rc end
+end
+
+local function savedBounds()
+  if prefs.bounds then return fitInWindow(prefs.bounds) end
+end
+
+-- Hides or shows the Mode and Posterize rows. The window grows or shrinks
+-- by the height of those rows, so the preview keeps its size.
+local function setCompact(compact)
+  state.compact = compact
+  prefs.compact = compact
+  local before = dlg.sizeHint.height
+  dlg:modify{ id="mode", visible=not compact }
+  dlg:modify{ id="levels", visible=not compact }
+  local b = dlg.bounds
+  b.height = b.height + dlg.sizeHint.height - before
+  dlg.bounds = fitInWindow(b) or b
 end
 
 -- A button that toggles state[key] and shows it as pressed while on
@@ -202,6 +217,7 @@ local function open()
   state.mode = prefs.mode or V.PERCEPTUAL
   state.levels = prefs.levels or 0
   state.color, state.flip = false, false
+  state.compact = prefs.compact or false
 
   -- autofit=0: changing the info text must not snap the window back to its
   -- default size after the user resizes it
@@ -210,9 +226,13 @@ local function open()
   dlg:newrow()
   toggle("color", "Color", "color")
   toggle("flip", "Flip H", "flip")
+  dlg:button{
+    id="options", text="...", hexpand=false,
+    onclick=function() setCompact(not state.compact) end }
   dlg:newrow()
   dlg:combobox{
-    id="mode", label="Mode", option=MODES[state.mode], options=MODES,
+    id="mode", label="Mode", visible=not state.compact,
+    option=MODES[state.mode], options=MODES,
     onchange=function()
       state.mode = indexOf(MODES, dlg.data.mode) or V.PERCEPTUAL
       prefs.mode = state.mode
@@ -220,7 +240,7 @@ local function open()
     end }
   dlg:newrow()
   dlg:combobox{
-    id="levels", label="Posterize",
+    id="levels", label="Posterize", visible=not state.compact,
     option=state.levels >= 2 and tostring(state.levels) or "Off", options=LEVELS,
     onchange=function()
       state.levels = tonumber(dlg.data.levels) or 0
